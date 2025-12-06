@@ -1,4 +1,4 @@
-/* styles.css */
+/* styles.css – Tema Veneto Flat */
 
 /* --- Reset básico e Configurações Globais --- */
 * {
@@ -7,285 +7,441 @@
   box-sizing: border-box;
 }
 
-/* --- Tipografia (Opcional: Importar Google Fonts) --- */
-/* Para usar Lato e Montserrat diretamente do Google Fonts, você pode:
-   1. Adicionar este @import no topo do seu CSS:
-      @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Montserrat:wght@400;500;700&display=swap');
-   2. Ou adicionar o <link> no <head> do seu HTML:
-      <link rel="preconnect" href="https://fonts.googleapis.com">
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-      <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
+/* --- Paleta Veneto (CSS Variables) --- */
+:root {
+  --veneto-fundo: #F4F0E6;          /* papel natural / fundo geral */
+  --veneto-fundo-escuro: #201E1C;   /* quase preto, para textos fortes */
+  --veneto-terracota: #B6523A;      /* vermelho-ferrugem */
+  --veneto-ferrugem: #8F3B2C;       /* ferrugem mais profunda */
+  --veneto-mostarda: #D3A23A;       /* amarelo-mostarda */
+  --veneto-ocre: #C47C3F;           /* ocre queimado */
+  --veneto-petroleo: #21424A;       /* azul-petróleo escuro */
+  --veneto-verde-musgo: #4C5A3B;    /* verde-musgo */
+  --veneto-verde-azulado: #2F6A63;  /* verde-azulado */
+  --veneto-bege: #E3D5C3;           /* bege-cru */
+  --veneto-papel: #F7F3EA;          /* papel levemente sujo */
+  --veneto-branco-sujo: #F2EDE4;    /* branco não puro */
+  --veneto-roxo-suave: #6B4A63;     /* púrpura discreto */
+  --veneto-preto-profundo: #181615; /* preto profundo para detalhes */
+}
+
+/* --- Tipografia --- */
+/* Sugestão: use esses links no <head> do HTML:
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
+
 */
 
 body {
   font-family: 'Lato', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  line-height: 1.65;
-  color: #333A40; /* Cinza escuro para texto principal */
-  background-color: #F8F9FA; /* Fundo off-white sutil */
+  line-height: 1.7;
+  color: var(--veneto-fundo-escuro);
+  background-color: var(--veneto-fundo);
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  font-size: 16px; /* Tamanho base da fonte */
+  font-size: 16px;
+  letter-spacing: 0.01em;
 }
 
-h1, h2, h3, h4, h5, h6, nav a { /* Aplicando Montserrat aos títulos e navegação */
+h1, h2, h3, h4, h5, h6, nav a {
   font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* --- Moldura geral do site --- */
+.page-frame {
+  max-width: 1120px;
+  margin: 1.5rem auto 2.5rem;
+  padding: 0 1.5rem 2rem;
+  border: 3px solid var(--veneto-preto-profundo);
+  border-radius: 18px;
+  background: var(--veneto-papel);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.06); /* sombra chapada e suave */
 }
 
 /* --- Cabeçalho --- */
 header {
-  background-color: #2C3E50; /* Azul petróleo escuro */
-  color: #ECF0F1; /* Branco acinzentado */
-  padding: 2.5rem 1.5rem;
+  background-color: var(--veneto-petroleo);
+  color: var(--veneto-branco-sujo);
+  padding: 2.5rem 1.5rem 2rem;
   text-align: center;
+  border-radius: 16px 16px 0 0;
+  border-bottom: 4px solid var(--veneto-ocre);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Faixa geométrica no topo – assinatura Veneto */
+header::before {
+  content: "";
+  position: absolute;
+  top: 0.9rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 82%;
+  height: 8px;
+  background:
+    linear-gradient(
+      to right,
+      var(--veneto-terracota) 0 18%,
+      var(--veneto-mostarda) 18% 36%,
+      var(--veneto-verde-azulado) 36% 54%,
+      var(--veneto-roxo-suave) 54% 72%,
+      var(--veneto-ocre) 72% 100%
+    );
+  border-radius: 999px;
 }
 
 header h1 {
+  margin-top: 1.2rem;
   margin-bottom: 0.5rem;
-  font-size: 2.8rem;
-  font-weight: 500; /* Montserrat medium */
+  font-size: 2.6rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 header p {
-  font-size: 1.15rem;
-  color: #BDC3C7; /* Cinza mais claro */
-  font-weight: 300; /* Lato light */
+  font-size: 1.05rem;
+  color: var(--veneto-bege);
+  font-weight: 300;
+  max-width: 640px;
+  margin: 0.4rem auto 0;
 }
 
 /* --- Navegação --- */
 nav {
-  background-color: #34495E; /* Tom de azul um pouco mais claro que o header */
-  padding: 0.8rem 0;
+  background-color: var(--veneto-papel);
+  padding: 0.8rem 1.5rem 1rem;
   text-align: center;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Sombra sutil */
-  position: sticky; /* Menu fixo no topo ao rolar */
-  top: 0;
-  z-index: 1000; /* Garante que fique acima de outros conteúdos */
+  border-bottom: 2px solid var(--veneto-preto-profundo);
+}
+
+.nav-inner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: 999px;
+  background-color: var(--veneto-fundo);
+  border: 1px solid var(--veneto-bege);
 }
 
 nav a {
-  color: #ECF0F1;
+  color: var(--veneto-preto-profundo);
   text-decoration: none;
-  margin: 0 1.2rem;
-  padding: 0.6rem 1rem;
-  border-radius: 5px;
-  font-weight: 500; /* Montserrat medium */
-  transition: background-color 0.25s ease, color 0.25s ease;
-  font-size: 0.95rem;
-  text-transform: uppercase; /* Opcional: look mais formal */
-  letter-spacing: 0.5px; /* Opcional: leve espaçamento */
+  padding: 0.5rem 0.9rem;
+  border-radius: 999px;
+  font-weight: 500;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border: 1px solid transparent;
+  transition: background-color 0.18s ease-out, color 0.18s ease-out, border-color 0.18s ease-out, transform 0.1s ease-out;
 }
 
-nav a:hover, nav a:focus {
-  background-color: #4A6572; /* Cor de fundo ao passar o mouse/focar */
-  color: #FFFFFF;
+nav a:hover,
+nav a:focus {
+  background-color: var(--veneto-terracota);
+  color: var(--veneto-branco-sujo);
+  border-color: var(--veneto-preto-profundo);
+  transform: translateY(-1px);
 }
 
 /* --- Conteúdo Principal --- */
 main {
-  flex-grow: 1; /* Ocupa espaço restante para footer ficar no final */
-  max-width: 980px; /* Limita largura para melhor leitura */
-  margin: 2.5rem auto; /* Centraliza e adiciona margem superior/inferior */
-  padding: 0 1.5rem; /* Padding lateral */
+  flex-grow: 1;
+  margin: 2rem auto 0;
+  padding: 0 1.5rem 2rem;
   width: 100%;
 }
 
 /* --- Seções Genéricas --- */
 .secao {
-  background-color: #FFFFFF; /* Fundo branco */
-  padding: 2.5rem;
-  margin-bottom: 2.5rem;
-  border-radius: 8px; /* Bordas arredondadas */
-  box-shadow: 0 5px 15px rgba(0,0,0,0.07); /* Sombra sutil */
+  background-color: var(--veneto-branco-sujo);
+  padding: 2.2rem 2.3rem;
+  margin-bottom: 2rem;
+  border-radius: 18px;
+  border: 1px solid var(--veneto-bege);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Barra geométrica lateral sutil */
+.secao::before {
+  content: "";
+  position: absolute;
+  left: 0.9rem;
+  top: 1.4rem;
+  width: 6px;
+  height: calc(100% - 2.8rem);
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      var(--veneto-terracota),
+      var(--veneto-terracota) 12px,
+      var(--veneto-verde-musgo) 12px,
+      var(--veneto-verde-musgo) 24px
+    );
+  border-radius: 999px;
+  opacity: 0.9;
+}
+
+.secao-inner {
+  margin-left: 1.6rem;
 }
 
 .secao h2 {
   font-size: 1.9rem;
-  color: #2C3E50; /* Cor do título da seção */
-  margin-bottom: 1.8rem;
-  border-bottom: 3px solid #5DADE2; /* Linha azul clara (destaque) */
-  padding-bottom: 0.8rem;
-  font-weight: 500; /* Montserrat medium */
+  color: var(--veneto-petroleo);
+  margin-bottom: 1.3rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.secao h2 span {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background-color: var(--veneto-fundo);
+  border: 1px solid var(--veneto-ocre);
 }
 
 .secao p {
-  margin-bottom: 1.2rem;
-  color: #495057; /* Cinza para parágrafos */
+  margin-bottom: 1.1rem;
+  color: var(--veneto-fundo-escuro);
+  font-size: 0.99rem;
 }
 
 .secao p:last-child {
   margin-bottom: 0;
 }
 
-/* --- Cards de Projeto --- */
+/* --- Grids para obras / projetos --- */
+.veneto-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+/* --- Cards de Projeto / Obra --- */
 .projeto-card {
-  background-color: #FDFDFE; /* Quase branco */
-  border: 1px solid #E0E6ED; /* Borda sutil */
-  padding: 1.8rem;
-  margin-bottom: 1.8rem;
-  border-radius: 6px;
-  transition: box-shadow 0.3s ease, transform 0.2s ease;
+  background-color: var(--veneto-papel);
+  border: 1px solid var(--veneto-bege);
+  padding: 1.6rem 1.5rem 1.4rem;
+  border-radius: 14px;
+  transition: transform 0.18s ease-out, box-shadow 0.18s ease-out, border-color 0.18s ease-out;
+  position: relative;
+}
+
+.projeto-card::after {
+  content: "";
+  position: absolute;
+  right: 1.1rem;
+  bottom: 1rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  border: 2px solid var(--veneto-preto-profundo);
+  box-shadow: inset 0 0 0 8px var(--veneto-terracota),
+              inset 0 0 0 16px var(--veneto-mostarda);
+  opacity: 0.9;
 }
 
 .projeto-card:hover {
-  box-shadow: 0 8px 20px rgba(0,0,0,0.09); /* Sombra mais pronunciada no hover */
-  transform: translateY(-4px); /* Leve elevação no hover */
-}
-
-.projeto-card:last-child {
-    margin-bottom: 0;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.09);
+  border-color: var(--veneto-terracota);
+  transform: translateY(-3px);
 }
 
 .projeto-card h3 {
-  font-size: 1.35rem;
-  color: #34495E; /* Tom de azul da navegação */
-  margin-bottom: 0.8rem;
-  font-weight: 500; /* Montserrat medium */
+  font-size: 1.3rem;
+  color: var(--veneto-petroleo);
+  margin-bottom: 0.7rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.projeto-card p {
+  font-size: 0.96rem;
+  color: var(--veneto-fundo-escuro);
+  margin-bottom: 0.7rem;
+}
+
+/* Tags simbólicas (ex: temas, técnicas) */
+.tag-simbolo {
+  display: inline-block;
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--veneto-preto-profundo);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  margin-right: 0.4rem;
+  margin-top: 0.2rem;
+  background-color: var(--veneto-fundo);
+}
+
+/* --- Assinatura / selo --- */
+.veneto-selo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid var(--veneto-preto-profundo);
+  background-color: var(--veneto-papel);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+}
+
+.veneto-selo-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background-color: var(--veneto-terracota);
+  box-shadow:
+    0 0 0 4px var(--veneto-fundo),
+    0 0 0 6px var(--veneto-preto-profundo);
 }
 
 /* --- Rodapé --- */
 footer {
-  background-color: #212529; /* Cinza bem escuro */
-  color: #CED4DA; /* Cinza claro */
+  background-color: var(--veneto-fundo);
+  color: var(--veneto-fundo-escuro);
   text-align: center;
-  padding: 2.5rem 1.5rem;
-  margin-top: auto; /* Garante que o footer fique no final */
+  padding: 2rem 1.5rem 3rem;
+  margin-top: auto;
+  border-top: 2px solid var(--veneto-preto-profundo);
 }
 
-footer div p { /* Para "Amaro Neto | Ver currículo" */
-  margin-bottom: 1.5rem;
-  font-size: 1rem;
+footer .secao-contato {
+  max-width: 620px;
+  margin: 0 auto;
 }
 
-/* Estilos para h2 e p dentro do footer (idealmente, remova estilos inline do HTML) */
 footer .secao-contato h2 {
-  font-size: 1.25rem;
-  color: #F8F9FA;
-  margin-top: 0;
-  margin-bottom: 1.2rem;
-  border-bottom: none;
-  padding-bottom: 0;
+  font-size: 1.2rem;
+  color: var(--veneto-petroleo);
+  margin-bottom: 1rem;
   font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
 }
 
 footer .secao-contato p {
-  margin: 0.5rem 0;
-  font-size: 0.95rem;
+  margin: 0.35rem 0;
+  font-size: 0.9rem;
+}
+
+footer div p {
+  margin-top: 1.4rem;
+  font-size: 0.9rem;
 }
 
 footer a {
-  color: #79A6DC; /* Azul claro para links no footer */
+  color: var(--veneto-terracota);
   text-decoration: none;
-  transition: color 0.2s ease;
+  font-weight: 500;
+  transition: color 0.18s ease-out, text-decoration-color 0.18s ease-out;
 }
 
-footer a:hover, footer a:focus {
+footer a:hover,
+footer a:focus {
   text-decoration: underline;
-  color: #A0C3EB; /* Azul um pouco mais claro no hover */
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+  color: var(--veneto-ferrugem);
 }
 
-/* --- Links Globais (se não especificado de outra forma) --- */
+/* --- Links Globais --- */
 a {
-  color: #347AB6; /* Tom de azul para links no corpo */
+  color: var(--veneto-verde-azulado);
   text-decoration: none;
-  font-weight: 500; /* Destaque para links */
-  transition: color 0.2s ease;
+  font-weight: 500;
+  transition: color 0.18s ease-out, text-decoration-color 0.18s ease-out;
 }
 
-a:hover, a:focus {
+a:hover,
+a:focus {
   text-decoration: underline;
-  color: #285F8F; /* Tom mais escuro no hover */
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+  color: var(--veneto-petroleo);
 }
 
-/* --- Ajustes para Telas Menores (Responsividade) --- */
+/* --- Responsividade --- */
 @media (max-width: 768px) {
   body {
     font-size: 15px;
   }
+
+  .page-frame {
+    margin: 0.8rem auto 1.6rem;
+    padding: 0.8rem 1rem 1.6rem;
+    border-radius: 16px;
+  }
+
   header {
-    padding: 2rem 1rem;
+    padding: 2rem 1rem 1.6rem;
   }
+
   header h1 {
-    font-size: 2.2rem;
+    font-size: 2rem;
   }
+
   header p {
-    font-size: 1rem;
+    font-size: 0.95rem;
   }
-  nav {
-    padding: 0.5rem 0;
-    position: static; /* Remove sticky em telas menores se preferir */
+
+  .nav-inner {
+    flex-wrap: wrap;
+    gap: 0.3rem;
   }
+
   nav a {
-    display: block; /* Links da navegação um abaixo do outro */
-    margin: 0.6rem auto;
-    width: 90%;
-    padding: 0.8rem 1rem;
+    padding: 0.45rem 0.7rem;
+    font-size: 0.78rem;
   }
+
   main {
-    margin: 1.5rem auto;
-    padding: 0 1rem;
+    margin: 1.4rem auto 0;
+    padding: 0 0.4rem 1.6rem;
   }
+
   .secao {
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
+    padding: 1.6rem 1.4rem;
+    border-radius: 14px;
   }
+
+  .secao::before {
+    left: 0.6rem;
+  }
+
+  .secao-inner {
+    margin-left: 1.4rem;
+  }
+
   .secao h2 {
-    font-size: 1.6rem;
-    margin-bottom: 1.2rem;
-    padding-bottom: 0.6rem;
+    font-size: 1.55rem;
   }
+
+  .veneto-grid {
+    grid-template-columns: 1fr;
+  }
+
   .projeto-card {
-    padding: 1.2rem;
-    margin-bottom: 1.2rem;
+    padding: 1.4rem 1.3rem 1.25rem;
   }
-  .projeto-card h3 {
-    font-size: 1.2rem;
-  }
+
   footer {
-    padding: 2rem 1rem;
+    padding: 1.8rem 1rem 2.2rem;
   }
 }
-
-/* --- Estilos para Seções de Blog e Clipping (se usar Bootstrap) --- */
-/* Coloque aqui as personalizações para .card, .btn-primary etc., se você
-   for adicionar o Bootstrap CSS ao seu HTML para essas seções. Exemplo: */
-
-/*
-#blog-section .card,
-#clipping-section .card {
-  border: 1px solid #E0E6ED;
-  border-radius: 6px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.07);
-  transition: box-shadow 0.3s ease, transform 0.2s ease;
-  margin-bottom: 1.5rem; // Se não usar g-4 do Bootstrap
-}
-
-#blog-section .card:hover,
-#clipping-section .card:hover {
-  box-shadow: 0 8px 20px rgba(0,0,0,0.09);
-  transform: translateY(-4px);
-}
-
-#blog-section .card-title,
-#clipping-section .card-title {
-  font-family: 'Montserrat', sans-serif;
-  color: #34495E;
-  font-size: 1.25rem;
-}
-
-#blog-section .btn-primary,
-#clipping-section .btn-primary {
-  background-color: #347AB6;
-  border-color: #347AB6;
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 500;
-  padding: 0.5rem 1rem;
-  font-size: 0.9rem;
-}
-
-#blog-section .btn-primary:hover,
-#clipping-section .btn-primary:hover {
-  background-color: #285F8F;
-  border-color: #285F8F;
-}
-*/
