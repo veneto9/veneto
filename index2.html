@@ -1,0 +1,294 @@
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import { Mail, Instagram, ExternalLink } from "lucide-react";
+
+/**
+ * DESIGN PHILOSOPHY: Brutalism Digital com Raízes Analógicas
+ * - Layout assimétrico: coluna principal (70%) + sidebar (30%)
+ * - Tipografia pesada (IBM Plex Serif para títulos)
+ * - Cores terrosas (ocre, cinza, preto)
+ * - Animações lentas (600ms) refletindo tempo do processo cerâmico
+ * - Imagens sem moldura, flutuando em espaço branco generoso
+ * - Honestidade material: sem polimento excessivo
+ */
+
+export default function Home() {
+  const [email, setEmail] = useState("");
+  const [subscribed, setSubscribed] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    
+    // Simular envio (em produção, conectar a API de newsletter)
+    await new Promise(resolve => setTimeout(resolve, 800));
+    
+    setSubscribed(true);
+    setEmail("");
+    setIsLoading(false);
+    
+    // Resetar mensagem após 4 segundos
+    setTimeout(() => setSubscribed(false), 4000);
+  };
+
+  return (
+    <div className="min-h-screen bg-background text-foreground">
+      {/* HERO SECTION: Assimétrico com imagem de mãos na cerâmica */}
+      <section className="relative overflow-hidden bg-background">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.3fr] gap-0 min-h-screen">
+          {/* Coluna Esquerda: Texto + CTA */}
+          <div className="flex flex-col justify-center px-8 sm:px-10 lg:px-16 py-20 lg:py-0 bg-background">
+            <div className="max-w-lg">
+              <p className="series-number mb-8 text-xs">Artista Visual • Cerâmica • Cultura Maker</p>
+              
+              <h1 className="mb-8 leading-tight text-5xl lg:text-6xl">
+                Veneto
+              </h1>
+              
+              <p className="text-lg leading-relaxed mb-10 text-foreground/80 font-light">
+                Tempo comprimido em forma. Barro, gesto manual, risco. Onde arte, técnica e vida não se separam.
+              </p>
+              
+              {/* Newsletter CTA */}
+              <div className="mb-14 space-y-4">
+                <p className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">
+                  Receba novidades e convites para cursos
+                </p>
+                
+                <form onSubmit={handleSubscribe} className="flex flex-col gap-3">
+                  <Input
+                    type="email"
+                    placeholder="seu@email.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    disabled={isLoading}
+                    className="bg-white border border-foreground/30 placeholder:text-foreground/40 focus:border-accent focus:ring-accent/20 py-3 px-4 text-base"
+                  />
+                  <Button
+                    type="submit"
+                    disabled={isLoading}
+                    className="bg-accent hover:bg-accent/85 text-accent-foreground font-bold uppercase tracking-wider py-3 text-sm transition-all duration-500 active:scale-95"
+                  >
+                    {isLoading ? "Inscrevendo..." : "Inscrever-se"}
+                  </Button>
+                </form>
+                
+                {subscribed && (
+                  <p className="text-sm text-accent font-medium animate-in fade-in duration-300">
+                    ✓ Inscrição confirmada! Obrigado.
+                  </p>
+                )}
+              </div>
+              
+              {/* Links de Redes Sociais */}
+              <div className="flex gap-8 pt-10 border-t border-border/50">
+                <a href="#" className="flex items-center gap-2 text-xs uppercase tracking-widest font-semibold hover:text-accent transition-colors duration-400">
+                  <Instagram size={16} />
+                  Instagram
+                </a>
+                <a href="#" className="flex items-center gap-2 text-xs uppercase tracking-widest font-semibold hover:text-accent transition-colors duration-400">
+                  <Mail size={16} />
+                  Contato
+                </a>
+              </div>
+            </div>
+          </div>
+          
+          {/* Coluna Direita: Imagem Hero */}
+          <div className="relative overflow-hidden bg-foreground/5 hidden lg:block">
+            <img
+              src="/images/hero-ceramics-hands.jpg"
+              alt="Mãos moldando barro na roda de cerâmica"
+              className="w-full h-full object-cover transition-all duration-700 hover:brightness-95"
+            />
+            {/* Overlay sutil */}
+            <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-background/30 pointer-events-none" />
+          </div>
+        </div>
+      </section>
+
+      {/* DIVIDER: Linha Bruta */}
+      <div className="divider-line" />
+
+      {/* SOBRE O ARTISTA */}
+      <section className="py-24 lg:py-40">
+        <div className="container max-w-5xl">
+          <h2 className="mb-16 text-4xl lg:text-5xl">Sobre</h2>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-[2.5fr_1fr] gap-16 lg:gap-24">
+            {/* Texto Principal */}
+            <div className="space-y-7">
+              <p className="text-xl leading-relaxed font-light">
+                Eu não separo arte, técnica e vida. Tudo o que faço nasce desse atrito.
+              </p>
+              
+              <p className="leading-relaxed text-foreground/75 text-base">
+                Meu olhar vem das artes visuais, mas se ancora no barro, no gesto manual, no erro que ensina mais que o acerto. A cerâmica, pra mim, não é ornamento nem nostalgia: é linguagem. É tempo comprimido em forma. É corpo trabalhando contra a pressa do mundo.
+              </p>
+              
+              <p className="leading-relaxed text-foreground/75 text-base">
+                Desenho como quem pensa. Modelo como quem escreve. Queimo como quem assume risco. Nada aqui é neutro: cada rosto, cada marca, cada imperfeição carrega memória, política, afeto e cansaço acumulado.
+              </p>
+              
+              <p className="leading-relaxed text-foreground/75 text-base">
+                A cultura maker entra como extensão ética do meu fazer. Não é fetiche tecnológico. É autonomia. É entender a ferramenta, hackear o processo, misturar impressora 3D com barro, código com mão suja, arquivo digital com fogo real.
+              </p>
+            </div>
+            
+            {/* Sidebar: Informações Técnicas */}
+            <div className="space-y-10 pt-2">
+              <div className="border-l-2 border-accent pl-6">
+                <p className="series-number mb-3 text-xs">Prática</p>
+                <p className="text-sm leading-relaxed text-foreground/75">Cerâmica, Porcelana, Escultura, Instalação</p>
+              </div>
+              
+              <div className="border-l-2 border-accent pl-6">
+                <p className="series-number mb-3 text-xs">Processo</p>
+                <p className="text-sm leading-relaxed text-foreground/75">Handbuilt, Wheel-thrown, Firing, Glazing</p>
+              </div>
+              
+              <div className="border-l-2 border-accent pl-6">
+                <p className="series-number mb-3 text-xs">Interesse</p>
+                <p className="text-sm leading-relaxed text-foreground/75">Arte Popular, Urbano, Espiritual, Cotidiano</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* DIVIDER */}
+      <div className="divider-line" />
+
+      {/* GALERIA: Grid Assimétrico */}
+      <section className="py-24 lg:py-40">
+        <div className="container">
+          <h2 className="mb-20 text-4xl lg:text-5xl">Trabalhos Recentes</h2>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-10 lg:gap-16">
+            {/* Imagem Grande */}
+            <div className="lg:row-span-2">
+              <img
+                src="/images/fired-ceramic-series.jpg"
+                alt="Série de cerâmicas queimadas"
+                className="work-image w-full h-full object-cover transition-all duration-700 hover:brightness-95"
+              />
+              <p className="series-number mt-6 text-xs">Série de Vasos • 2024</p>
+            </div>
+            
+            {/* Coluna Direita: Duas Imagens */}
+            <div className="space-y-10">
+              <div>
+                <img
+                  src="/images/process-clay-texture.jpg"
+                  alt="Textura de barro cru"
+                  className="work-image w-full h-72 object-cover transition-all duration-700 hover:brightness-95"
+                />
+                <p className="series-number mt-6 text-xs">Detalhe de Processo • 2024</p>
+              </div>
+              
+              <div>
+                <img
+                  src="/images/studio-workspace.jpg"
+                  alt="Espaço de trabalho do estúdio"
+                  className="work-image w-full h-72 object-cover transition-all duration-700 hover:brightness-95"
+                />
+                <p className="series-number mt-6 text-xs">Estúdio • 2024</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* DIVIDER */}
+      <div className="divider-line" />
+
+      {/* SEÇÃO DE CURSOS/WORKSHOPS */}
+      <section className="py-24 lg:py-40 bg-secondary/40">
+        <div className="container max-w-5xl">
+          <h2 className="mb-16 text-4xl lg:text-5xl">Cursos e Workshops</h2>
+          
+          <p className="text-lg leading-relaxed mb-10 text-foreground/80 font-light max-w-3xl">
+            Acredito no saber que circula, no aprendizado compartilhado, na técnica como bem comum. Produzir é também ensinar, testar, errar em público e devolver ao mundo algo que faça sentido.
+          </p>
+          
+          <Button
+            className="bg-accent hover:bg-accent/85 text-accent-foreground font-bold uppercase tracking-wider py-3 text-sm transition-all duration-500 active:scale-95"
+          >
+            Saiba Mais Sobre Cursos
+            <ExternalLink size={16} className="ml-3" />
+          </Button>
+        </div>
+      </section>
+
+      {/* DIVIDER */}
+      <div className="divider-line" />
+
+      {/* LOJA */}
+      <section className="py-24 lg:py-40">
+        <div className="container max-w-5xl">
+          <h2 className="mb-16 text-4xl lg:text-5xl">Loja</h2>
+          
+          <p className="text-lg leading-relaxed mb-10 text-foreground/80 font-light max-w-3xl">
+            Peças únicas, edições limitadas e encomendas personalizadas. Cada trabalho é feito à mão, refletindo o tempo e o cuidado investidos.
+          </p>
+          
+          <Button
+            className="bg-accent hover:bg-accent/85 text-accent-foreground font-bold uppercase tracking-wider py-3 text-sm transition-all duration-500 active:scale-95"
+          >
+            Explorar Loja
+            <ExternalLink size={16} className="ml-3" />
+          </Button>
+        </div>
+      </section>
+
+      {/* DIVIDER */}
+      <div className="divider-line" />
+
+      {/* FOOTER */}
+      <footer className="py-20 border-t border-border/50">
+        <div className="container max-w-5xl">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-16 mb-16">
+            {/* Sobre */}
+            <div>
+              <p className="series-number mb-6 text-xs">Veneto</p>
+              <p className="text-sm leading-relaxed text-foreground/70">
+                Artista visual focado em cerâmica, porcelana e cultura maker.
+              </p>
+            </div>
+            
+            {/* Links */}
+            <div>
+              <p className="series-number mb-6 text-xs">Links</p>
+              <ul className="space-y-3 text-sm">
+                <li><a href="#" className="hover:text-accent transition-colors duration-400">Galeria</a></li>
+                <li><a href="#" className="hover:text-accent transition-colors duration-400">Cursos</a></li>
+                <li><a href="#" className="hover:text-accent transition-colors duration-400">Loja</a></li>
+                <li><a href="#" className="hover:text-accent transition-colors duration-400">Contato</a></li>
+              </ul>
+            </div>
+            
+            {/* Redes */}
+            <div>
+              <p className="series-number mb-6 text-xs">Redes</p>
+              <ul className="space-y-3 text-sm">
+                <li><a href="#" className="hover:text-accent transition-colors duration-400">Instagram</a></li>
+                <li><a href="#" className="hover:text-accent transition-colors duration-400">Email</a></li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="border-t border-border/50 pt-12">
+            <p className="text-xs text-muted-foreground">
+              © 2024 Veneto. Todos os direitos reservados.
+            </p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+
