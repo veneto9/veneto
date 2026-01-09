@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Visual Flow Pro v2.0 — Analista Artista</title>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.321.0/dist/umd/lucide.min.js"></script>
+  <style>
+    :root {
+      --bg: #050505; --panel: #0d0d0f; --accent: #3b82f6; --accent2: #10b981;
+      --danger: #ef4444; --warn: #f59e0b; --text: #f4f4f5; --muted: #71717a;
+      --border: #27272a; --surface: #121214;
+    }
+    * { box-sizing: border-box; outline: none; }
+    body { 
+      font-family: 'Inter', system-ui, sans-serif; background: var(--bg); 
+      color: var(--text); margin: 0; display: flex; height: 100vh; overflow: hidden; 
+    }
+
+    .sidebar {
+      width: 400px; min-width: 400px; background: var(--panel);
+      border-right: 1px solid var(--border); display: flex; flex-direction: column;
+      overflow-y: auto; z-index: 20;
+    }
+
+    .sidebar-header {
+      padding: 20px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 12px; position: sticky; top: 0;
+      background: var(--panel); backdrop-filter: blur(10px); z-index: 30;
+    }
+    .sidebar-header h1 { font-size: 1rem; margin: 0; font-weight: 800; letter-spacing: -0.02em; }
+    
+    .seed-pill {
+      margin-left: auto; font-size: 0.7rem; color: var(--muted);
+      border: 1px solid var(--border); padding: 5px 12px; border-radius: 99px;
+      background: #000; font-family: monospace;
+    }
+
+    .control-section { padding: 20px; border-bottom: 1px solid var(--border); }
+    h3 { font-size: 0.7rem; text-transform: uppercase; color: var(--muted); margin: 0 0 15px 0; letter-spacing: 0.12em; }
+
+    .form-group { margin-bottom: 18px; }
+    label { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 8px; color: #a1a1aa; }
+    label span { color: var(--accent); font-weight: 700; }
+    
+    input[type="range"] {
+      width: 100%; appearance: none; height: 3px; background: #333; border-radius: 2px;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      appearance: none; width: 14px; height: 14px; background: #fff; border-radius: 50%; cursor: pointer;
+    }
+
+    .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 15px 20px; }
+    button {
+      background: var(--surface); border: 1px solid var(--border); color: #e4e4e7;
+      padding: 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 600;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    button:hover { background: #222; border-color: #444; }
+    button.active { background: var(--accent); border-color: var(--accent); color: white; }
+    button.primary { background: #fff; color: #000; border: none; }
+    button.primary:hover { background: #e4e4e7; }
+    button.danger { color: #f87171; border-color: rgba(239,68,68,0.2); }
+
+    .viewport { flex: 1; display: flex; flex-direction: column; background: #070708; position: relative; }
+    
+    .topbar {
+      display: flex; align-items: center; gap: 15px; padding: 12px 25px;
+      border-bottom: 1px solid var(--border); background: var(--panel);
+    }
+
+    .canvas-container { 
+      flex: 1; display: flex; justify-content: center; align-items: center; 
+      position: relative; padding: 40px; background-image: radial-gradient(#151517 1px, transparent 1px);
+      background-size: 30px 30px;
+    }
+    
+    canvas { background: #fff; border-radius: 4px; cursor: crosshair; }
+
+    .analysis-overlay {
+      position: absolute; top: 25px; right: 25px; width: 330px;
+      background: rgba(10, 10, 12, 0.9); backdrop-filter: blur(20px);
+      border: 1px solid var(--border); border-radius: 12px;
+      padding: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    }
+
+    .metric-item { margin-bottom: 15px; }
+    .metric-head { display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 6px; color: #71717a; }
+    .metric-head b { color: #fff; }
+    .bar-track { height: 4px; background: #222; border-radius: 10px; overflow: hidden; }
+    .bar-val { height: 100%; width: 0%; transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1); background: var(--accent); }
+
+    .diag-box {
+      font-size: 0.8rem; line-height: 1.6; color: #d1d1d6; 
+      background: #000; padding: 15px; border-radius: 8px; border: 1px solid var(--border);
+    }
+    .diag-box b { color: var(--accent2); display: block; margin-bottom: 5px; text-transform: uppercase; font-size: 0.65rem; }
+
+    .sug-list { margin: 15px 0 0 0; padding: 0; list-style: none; font-size: 0.75rem; color: #a1a1aa; }
+    .sug-list li { margin-bottom: 6px; display: flex; gap: 8px; }
+    .sug-list li::before { content: "→"; color: var(--accent); }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <i data-lucide="aperture" style="color:var(--accent)"></i>
+      <h1>Visual Flow Analyzer</h1>
+      <div class="seed-pill" id="seedDisplay">SEED: --</div>
+    </div>
+
+    <div class="control-section">
+      <h3>Parâmetros de Composição</h3>
+      <div class="form-group">
+        <label>Número de Objetos <span id="lbl-count">4</span></label>
+        <input type="range" id="in-count" min="1" max="12" value="4">
+      </div>
+      <div class="form-group">
+        <label>Geometria (Círculo/Quadrado) <span id="lbl-shape">50%</span></label>
+        <input type="range" id="in-shape" min="0" max="100" value="50">
+      </div>
+      <div class="form-group">
+        <label>Saturação Óptica <span id="lbl-color">70%</span></label>
+        <input type="range" id="in-color" min="0" max="100" value="70">
+      </div>
+    </div>
+
+    <div class="control-section">
+      <h3>Forças Dinâmicas</h3>
+      <div class="form-group">
+        <label>Proximidade (Gestalt) <span id="lbl-density">40%</span></label>
+        <input type="range" id="in-density" min="0" max="100" value="40">
+      </div>
+      <div class="form-group">
+        <label>Tensão de Borda <span id="lbl-tension">20%</span></label>
+        <input type="range" id="in-tension" min="0" max="100" value="20">
+      </div>
+    </div>
+
+    <div class="btn-grid">
+      <button id="mode-normal" class="active"><i data-lucide="layout"></i>Layout</button>
+      <button id="mode-flow"><i data-lucide="eye"></i>Fluxo</button>
+      <button id="mode-weight"><i data-lucide="thermometer"></i>Peso</button>
+      <button id="mode-grid"><i data-lucide="hash"></i>Regras</button>
+    </div>
+
+    <div class="control-section" style="border:none">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+        <button class="primary" id="btn-optimize" style="grid-column: span 2">
+          <i data-lucide="sparkles"></i>Otimização Formal
+        </button>
+        <button id="btn-new"><i data-lucide="refresh-cw"></i>Novo</button>
+        <button class="danger" id="btn-reset"><i data-lucide="trash-2"></i>Reset</button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="viewport">
+    <div class="topbar">
+      <span style="font-size: 0.7rem; color: var(--muted); font-weight: 700;">ENGINE: CANO-PRO-v2</span>
+      <div style="flex:1"></div>
+      <div id="status-pill" style="font-size:0.7rem; color:var(--accent2)">● ANALISADOR ATIVO</div>
+    </div>
+
+    <div class="canvas-container">
+      <canvas id="compositionCanvas"></canvas>
+
+      <div class="analysis-overlay">
+        <div class="metric-item">
+          <div class="metric-head">Equilíbrio Estático <b id="val-balance">0%</b></div>
+          <div class="bar-track"><div class="bar-val" id="bar-balance"></div></div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-head">Hierarquia de Foco <b id="val-hierarchy">0%</b></div>
+          <div class="bar-track"><div class="bar-val" id="bar-hierarchy"></div></div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-head">Ritmo Espacial <b id="val-rhythm">0%</b></div>
+          <div class="bar-track"><div class="bar-val" id="bar-rhythm"></div></div>
+        </div>
+
+        <div class="diag-box">
+          <b>Crítica Formal</b>
+          <span id="diag-main">Aguardando composição...</span>
+        </div>
+
+        <ul class="sug-list" id="sug-list"></ul>
+      </div>
+    </div>
+  </main>
+
+<script>
+  const canvas = document.getElementById('compositionCanvas');
+  const ctx = canvas.getContext('2d');
+  
+  let elements = [];
+  let currentMode = 'normal';
+  let draggingId = null;
+  let dragOffset = { x: 0, y: 0 };
+  let seed = Math.floor(Math.random() * 999999);
+  let canvasSize = { w: 800, h: 600 };
+
+  function init() {
+    lucide.createIcons();
+    handleResize();
+    generate();
+    loop();
+  }
+
+  function handleResize() {
+    const dpr = window.devicePixelRatio || 1;
+    const parent = canvas.parentElement;
+    canvasSize.w = Math.min(850, parent.clientWidth - 60);
+    canvasSize.h = Math.min(650, parent.clientHeight - 60);
+    
+    canvas.width = canvasSize.w * dpr;
+    canvas.height = canvasSize.h * dpr;
+    canvas.style.width = canvasSize.w + 'px';
+    canvas.style.height = canvasSize.h + 'px';
+    ctx.scale(dpr, dpr);
+  }
+
+  function random() {
+    let t = seed += 0x6D2B79F5;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  }
+
+  function generate() {
+    elements = [];
+    const count = parseInt(document.getElementById('in-count').value);
+    const shapeProb = document.getElementById('in-shape').value / 100;
+    const sat = document.getElementById('in-color').value;
+    const density = document.getElementById('in-density').value / 100;
+    const tension = document.getElementById('in-tension').value / 100;
+
+    const tempSeed = seed;
+    document.getElementById('seedDisplay').innerText = `SEED: ${seed % 10000}`;
+
+    for (let i = 0; i < count; i++) {
+      const size = 40 + (random() * 100);
+      const spread = 1.2 - density;
+      
+      let x = (canvasSize.w/2) + (random() - 0.5) * (canvasSize.w * spread);
+      let y = (canvasSize.h/2) + (random() - 0.5) * (canvasSize.h * spread);
+
+      // Aplica tensão periférica
+      const edgeX = (x < canvasSize.w/2) ? -1 : 1;
+      const edgeY = (y < canvasSize.h/2) ? -1 : 1;
+      x += edgeX * tension * 100; y += edgeY * tension * 100;
+
+      elements.push({
+        id: i,
+        x: clamp(x, size, canvasSize.w - size),
+        y: clamp(y, size, canvasSize.h - size),
+        size,
+        isCircle: random() < shapeProb,
+        color: `hsl(${random() * 360}, ${sat}%, 50%)`,
+        locked: false,
+        weight: 0
+      });
+    }
+    seed = tempSeed;
+    updateAnalysis();
+  }
+
+  function updateAnalysis() {
+    // 1. Equilíbrio (Centro de Gravidade Visual)
+    let totalMass = 0, sumX = 0, sumY = 0;
+    elements.forEach(el => {
+      // O peso aumenta conforme o tamanho e proximidade da borda
+      const distEdge = Math.min(el.x, el.y, canvasSize.w - el.x, canvasSize.h - el.y);
+      el.weight = (el.size * el.size) * (1 + (1 / (distEdge + 10)) * 50);
+      totalMass += el.weight;
+      sumX += el.x * el.weight;
+      sumY += el.y * el.weight;
+    });
+
+    const cogX = sumX / totalMass;
+    const cogY = sumY / totalMass;
+    const drift = Math.hypot(cogX - canvasSize.w/2, cogY - canvasSize.h/2);
+    const balance = Math.round(clamp(100 - (drift / 2), 0, 100));
+
+    // 2. Hierarquia (Diferença entre Pesos)
+    const sorted = [...elements].sort((a,b) => b.weight - a.weight);
+    const hie = elements.length > 1 ? Math.round((sorted[0].weight / sorted[1].weight - 1) * 50) : 100;
+    const hierarchy = clamp(hie, 0, 100);
+
+    // 3. Ritmo (Regularidade de Espaçamento)
+    let intervals = [];
+    for(let i=0; i<elements.length-1; i++) {
+      intervals.push(Math.hypot(elements[i].x - elements[i+1].x, elements[i].y - elements[i+1].y));
+    }
+    const rhythm = elements.length > 2 ? Math.round(100 - (Math.max(...intervals) - Math.min(...intervals)) / 5) : 100;
+
+    // UI Updates
+    updateBar('balance', balance);
+    updateBar('hierarchy', hierarchy);
+    updateBar('rhythm', rhythm);
+
+    // Crítica
+    let diag = "";
+    if(balance < 70) diag += "Compensação necessária: o peso visual pende drasticamente para fora do eixo. ";
+    if(hierarchy < 40) diag += "Conflito de interesse: muitos elementos competem pela mesma atenção. ";
+    if(rhythm < 50) diag += "Síncope visual: os intervalos entre objetos são erráticos e caóticos. ";
+    if(diag === "") diag = "Composição em equilíbrio harmônico. Proporções ideais detectadas.";
+    document.getElementById('diag-main').innerText = diag;
+
+    const list = document.getElementById('sug-list');
+    list.innerHTML = "";
+    if(balance < 80) list.innerHTML += "<li>Mover elemento dominante para o centro geométrico</li>";
+    if(hierarchy < 60) list.innerHTML += "<li>Aumentar contraste de escala no objeto principal</li>";
+    
+    // Armazena COG para desenho
+    window.cog = { x: cogX, y: cogY };
+  }
+
+  function updateBar(id, val) {
+    document.getElementById(`val-${id}`).innerText = val + '%';
+    document.getElementById(`bar-${id}`).style.width = val + '%';
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvasSize.w, canvasSize.h);
+    
+    // Draw Reference/Grid
+    if(currentMode === 'grid') {
+      ctx.strokeStyle = '#eee'; ctx.lineWidth = 1;
+      ctx.beginPath();
+      for(let i=1;i<3;i++) {
+        ctx.moveTo(canvasSize.w*i/3, 0); ctx.lineTo(canvasSize.w*i/3, canvasSize.h);
+        ctx.moveTo(0, canvasSize.h*i/3); ctx.lineTo(canvasSize.w, canvasSize.h*i/3);
+      }
+      ctx.stroke();
+    }
+
+    if(currentMode === 'weight') {
+      elements.forEach(el => {
+        const g = ctx.createRadialGradient(el.x, el.y, 0, el.x, el.y, el.size * 2);
+        g.addColorStop(0, 'rgba(255,0,0,0.15)'); g.addColorStop(1, 'rgba(255,0,0,0)');
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(el.x, el.y, el.size*2, 0, Math.PI*2); ctx.fill();
+      });
+    }
+
+    // Elementos
+    const sortedFlow = [...elements].sort((a,b) => b.weight - a.weight);
+    
+    elements.forEach((el, idx) => {
+      ctx.save();
+      ctx.fillStyle = el.color;
+      ctx.shadowColor = 'rgba(0,0,0,0.1)';
+      ctx.shadowBlur = el.locked ? 20 : 10;
+      
+      ctx.beginPath();
+      if(el.isCircle) ctx.arc(el.x, el.y, el.size/2, 0, Math.PI*2);
+      else ctx.rect(el.x - el.size/2, el.y - el.size/2, el.size, el.size);
+      ctx.fill();
+
+      if(el.locked) {
+        ctx.strokeStyle = varColor('--accent'); ctx.lineWidth = 2; ctx.stroke();
+      }
+      ctx.restore();
+
+      if(currentMode === 'flow') {
+        const rank = sortedFlow.indexOf(el) + 1;
+        ctx.fillStyle = "#fff"; ctx.font = "bold 12px sans-serif"; ctx.textAlign = "center";
+        ctx.fillText(rank, el.x, el.y + 5);
+      }
+    });
+
+    if(currentMode === 'flow' && elements.length > 1) {
+      ctx.strokeStyle = varColor('--accent'); ctx.setLineDash([5,5]); ctx.beginPath();
+      ctx.moveTo(sortedFlow[0].x, sortedFlow[0].y);
+      for(let i=1; i<Math.min(elements.length, 4); i++) {
+        const cpX = (sortedFlow[i-1].x + sortedFlow[i].x) / 2;
+        ctx.quadraticCurveTo(cpX, sortedFlow[i-1].y, sortedFlow[i].x, sortedFlow[i].y);
+      }
+      ctx.stroke(); ctx.setLineDash([]);
+    }
+
+    // Centro de Gravidade
+    if(window.cog) {
+      ctx.fillStyle = varColor('--accent2'); ctx.beginPath();
+      ctx.arc(window.cog.x, window.cog.y, 4, 0, Math.PI*2); ctx.fill();
+    }
+  }
+
+  function loop() { draw(); requestAnimationFrame(loop); }
+
+  function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+  function varColor(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+  // Eventos
+  window.addEventListener('resize', () => { handleResize(); generate(); });
+  
+  canvas.addEventListener('mousedown', e => {
+    const rect = canvas.getBoundingClientRect();
+    const x = (e.clientX - rect.left) * (canvasSize.w / rect.width);
+    const y = (e.clientY - rect.top) * (canvasSize.h / rect.height);
+    
+    draggingId = elements.find(el => Math.hypot(el.x - x, el.y - y) < el.size/2)?.id ?? null;
+    if(draggingId !== null) {
+      const el = elements.find(e => e.id === draggingId);
+      dragOffset = { x: x - el.x, y: y - el.y };
+    }
+  });
+
+  window.addEventListener('mousemove', e => {
+    if(draggingId !== null) {
+      const rect = canvas.getBoundingClientRect();
+      const x = (e.clientX - rect.left) * (canvasSize.w / rect.width);
+      const y = (e.clientY - rect.top) * (canvasSize.h / rect.height);
+      const el = elements.find(e => e.id === draggingId);
+      el.x = clamp(x - dragOffset.x, el.size/2, canvasSize.w - el.size/2);
+      el.y = clamp(y - dragOffset.y, el.size/2, canvasSize.h - el.size/2);
+      updateAnalysis();
+    }
+  });
+
+  window.addEventListener('mouseup', () => draggingId = null);
+  canvas.addEventListener('dblclick', e => {
+    const rect = canvas.getBoundingClientRect();
+    const x = (e.clientX - rect.left) * (canvasSize.w / rect.width);
+    const y = (e.clientY - rect.top) * (canvasSize.h / rect.height);
+    const el = elements.find(el => Math.hypot(el.x - x, el.y - y) < el.size/2);
+    if(el) el.locked = !el.locked;
+  });
+
+  document.querySelectorAll('input').forEach(i => i.addEventListener('input', () => {
+    document.getElementById('lbl-' + i.id.split('-')[1]).innerText = i.value + (i.id === 'in-count' ? '' : '%');
+    generate();
+  }));
+
+  document.querySelectorAll('.btn-grid button:not(.primary):not(.danger)').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+    b.classList.add('active');
+    currentMode = b.id.split('-')[1];
+  }));
+
+  document.getElementById('btn-new').addEventListener('click', () => { seed = Math.floor(Math.random()*99999); generate(); });
+  document.getElementById('btn-reset').addEventListener('click', () => { seed = 12345; generate(); });
+  document.getElementById('btn-optimize').addEventListener('click', () => {
+    // Inteligência de Otimização: move levemente para o equilíbrio áureo
+    elements.forEach(el => {
+      const targetX = lerp(el.x, canvasSize.w / 2, 0.2);
+      const targetY = lerp(el.y, canvasSize.h / 2, 0.2);
+      el.x = targetX; el.y = targetY;
+    });
+    updateAnalysis();
+  });
+
+  init();
+</script>
+</body>
+</html>
